@@ -1,0 +1,38 @@
+duckduckgo_test.py
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+options = Options()
+options.add_experimental_option("detach", True)
+
+driver = webdriver.Chrome(options=options)
+driver.get("https://duckduckgo.com")
+
+wait = WebDriverWait(driver, 10)
+
+# Search
+search_box = wait.until(
+    EC.presence_of_element_located((By.ID, "searchbox_input"))
+)
+search_box.send_keys("Selenium Python")
+search_box.submit()
+
+# Wait for results
+results = wait.until(
+    EC.presence_of_element_located((By.CSS_SELECTOR, "a.result__a"))
+)
+
+# Click first result
+results.click()
+
+# Assertion: page contains keyword
+wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+assert "selenium" in driver.page_source.lower()
+
+print("TEST PASSED")
+
+
